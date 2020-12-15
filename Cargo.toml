@@ -1,7 +1,8 @@
 [package]
 name = "process_uptime"
 version = "0.1.0"
-authors = ["iz <iz@genesismobo.com>"]
+authors = ["irexiz <zagan.ireneusz@gmail.com>"]
+license = "MIT/Apache-2.0"
 edition = "2018"
 keywords = ["pid", "uptime", "process_uptime", "application_uptime"]
 description = "Quick and simple way of fetching an application's uptime by pid"
