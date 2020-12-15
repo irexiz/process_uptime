@@ -3,7 +3,7 @@ name = "process_uptime"
 version = "0.1.0"
 authors = ["iz <iz@genesismobo.com>"]
 edition = "2018"
-keywords = ["pid", "uptime", "process uptime", "application uptime"]
+keywords = ["pid", "uptime", "process_uptime", "application_uptime"]
 description = "Quick and simple way of fetching an application's uptime by pid"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
