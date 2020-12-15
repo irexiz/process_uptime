@@ -1,24 +1,30 @@
+use std::convert::TryFrom;
 use std::error;
 use std::fs;
-use std::io;
+use std::process;
 use std::time;
 
-pub struct ProcessMetadata {
-    pid: u32,
-    metadata: fs::Metadata,
+pub struct ProcessUptime {
+    pub pid: u32,
+    pub uptime: time::Duration,
 }
 
-impl ProcessMetadata {
-    pub fn new(pid: u32) -> Result<Self, io::Error> {
+impl ProcessUptime {
+    pub fn new() -> Result<Self, Box<dyn error::Error>> {
+        let pid = process::id();
         let metadata = fs::metadata(format!("/proc/{}", pid))?;
+        let uptime = metadata.modified()?.elapsed()?;
 
-        Ok(Self { pid, metadata })
+        Ok(Self { pid, uptime })
     }
+}
 
-    pub fn uptime(&self) -> Result<time::Duration, Box<dyn error::Error>> {
-        Ok(self.metadata.modified()?.elapsed()?)
-    }
-    pub fn pid(&self) -> u32 {
-        self.pid
+impl TryFrom<u32> for ProcessUptime {
+    type Error = Box<dyn error::Error>;
+    fn try_from(pid: u32) -> Result<Self, Self::Error> {
+        let metadata = fs::metadata(format!("/proc/{}", pid))?;
+        let uptime = metadata.modified()?.elapsed()?;
+
+        Ok(Self { pid, uptime })
     }
 }
