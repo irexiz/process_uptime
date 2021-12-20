@@ -11,4 +11,5 @@ repository = "https://github.com/irexiz/process_uptime"
 
 [dependencies]
 anyhow = "1.0.40"
+libc = "0.2.112"
 
