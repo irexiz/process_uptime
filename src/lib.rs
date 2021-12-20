@@ -37,7 +37,7 @@ impl ProcessUptime {
         let system_uptime = Self::system_uptime(&content)?;
         let process_uptime = Self::process_uptime(pid)?;
 
-        // starttime  %llu `(22) starttime  %llu
+        // `starttime  %llu (22)`
         let sc_clk_tck: u64 = unsafe { libc::sysconf(libc::_SC_CLK_TCK).try_into()? };
 
         // To calculate process uptime we divide process_uptime (provided in clock ticks after
