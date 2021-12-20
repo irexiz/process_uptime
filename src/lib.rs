@@ -22,6 +22,8 @@ impl ProcessUptime {
             Ok(etime) => time::Duration::from_secs(etime),
             Err(_) => {
                 // Fallback to getting from /proc/{pid}/stat
+                // NOTE: changed from using /proc/{pid}/uptime file metadata as Linux exposes the
+                // proc tree lazily, created on first read.
                 Self::proc_stat_uptime(pid)?
             }
         };
@@ -34,13 +36,18 @@ impl ProcessUptime {
 
         let system_uptime = Self::system_uptime(&content)?;
         let process_uptime = Self::process_uptime(pid)?;
+
+        // starttime  %llu `(22) starttime  %llu
         let sc_clk_tck: u64 = unsafe { libc::sysconf(libc::_SC_CLK_TCK).try_into()? };
 
+        // To calculate process uptime we divide process_uptime (provided in clock ticks after
+        // system boot), divided by system's clock ticks per second - libc::_SC_CLK_TCK)
         let process_uptime = Duration::from_secs(system_uptime - process_uptime / sc_clk_tck);
         Ok(process_uptime)
     }
 
     fn process_uptime(pid: u32) -> Result<u64> {
+        // https://man7.org/linux/man-pages/man5/proc.5.html
         let content = fs::read_to_string(format!("/proc/{}/stat", pid))?;
         let process_uptime = content
             .split_whitespace()
